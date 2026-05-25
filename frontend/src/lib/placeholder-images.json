@@ -1,0 +1,46 @@
+{
+  "placeholderImages": [
+    {
+      "id": "casino-hero",
+      "description": "Marina Bay Sands night view",
+      "imageUrl": "/images/placeholders/casino-hero.jpg",
+      "imageHint": "luxury casino"
+    },
+    {
+      "id": "game-5k3",
+      "description": "5K3 Game icon",
+      "imageUrl": "/images/placeholders/game-5k3.jpg",
+      "imageHint": "casino dice"
+    },
+    {
+      "id": "game-lucky",
+      "description": "Lucky Space icon",
+      "imageUrl": "/images/placeholders/game-lucky.jpg",
+      "imageHint": "space rocket"
+    },
+    {
+      "id": "game-lottery",
+      "description": "Lottery Game icon",
+      "imageUrl": "/images/placeholders/game-lottery.jpg",
+      "imageHint": "lottery ball"
+    },
+    {
+      "id": "banner-lottery",
+      "description": "Lottery special banner",
+      "imageUrl": "/images/placeholders/banner-lottery.jpg",
+      "imageHint": "lottery jackpot"
+    },
+    {
+      "id": "dice-s1",
+      "description": "Dice Face 1",
+      "imageUrl": "/sgp/s1.png",
+      "imageHint": "dice 1"
+    },
+    {
+      "id": "chip-icon-0",
+      "description": "Bet Chip 0",
+      "imageUrl": "/sgp/jydticon0.png",
+      "imageHint": "bet chip"
+    }
+  ]
+}

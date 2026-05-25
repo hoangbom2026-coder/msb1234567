@@ -1,0 +1,111 @@
+body { zoom: 0.8; }
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+body {
+  zoom: 0.8;
+  -moz-transform: scale(0.8);
+  -moz-transform-origin: 0 0;
+}
+input, select, textarea, .rounded-lg {
+  border-radius: 4px !important;
+}
+input:not([type='submit']):not([type='button']), select, textarea {
+  border-color: #d1d5db !important;
+}
+/* Ensure full functionality on mobile by preventing layout breakage */
+.container {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+
+/* Extra Refined Inputs & Buttons */
+input, select, textarea, button, .rounded-lg, .rounded-md {
+  border-radius: 2px !important; /* Squarer look */
+}
+input:not([type='submit']):not([type='button']), select, textarea {
+  font-size: 14px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  height: 36px !important;
+  border-color: #cbd5e1 !important; /* Slightly more visible slate-300 */
+}
+button {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+form label {
+  font-size: 13px !important;
+  margin-bottom: 4px !important;
+  display: inline-block !important;
+}
+

@@ -1,0 +1,26 @@
+import pool from '../config/database.js';
+
+export const getActiveRooms = async () => {
+  const [rows] = await pool.query('SELECT * FROM game_rooms WHERE status = 1');
+  return rows;
+};
+
+export const createSession = async (roomId, period, startTime, endTime) => {
+  const [result] = await pool.query(
+    'INSERT INTO game_sessions (room_id, period, start_time, end_time, status) VALUES (?, ?, ?, ?, ?)',
+    [roomId, period, startTime, endTime, 0]
+  );
+  return { id: result.insertId, roomId, period, startTime, endTime, status: 0 };
+};
+
+export const findLatestSession = async (roomId) => {
+    const [rows] = await pool.query('SELECT s.* FROM game_sessions s WHERE s.room_id = ? AND s.status = 0 ORDER BY s.end_time ASC LIMIT 1', [roomId]);
+    return rows[0] || null;
+};
+
+/**
+ * Updates the result and status of a game session.
+ */
+export const updateSessionResult = async (sessionId, result, connection = pool) => {
+    await connection.query('UPDATE game_sessions SET result = ?, status = 2 WHERE id = ?', [JSON.stringify(result), sessionId]);
+};

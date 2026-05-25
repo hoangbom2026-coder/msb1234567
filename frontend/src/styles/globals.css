@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 11%;
+    --foreground: 0 0% 100%;
+    --card: 222 47% 13%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 188 80% 33%; /* Teal: #118799 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 100% 62%; /* Gold: #ffc53e */
+    --secondary-foreground: 0 0% 0%;
+    --muted: 222 47% 20%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 222 47% 25%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 47% 20%;
+    --input: 222 47% 20%;
+    --ring: 188 80% 33%;
+    --radius: 6px; /* Slight rounding as requested */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html, body {
+    @apply bg-background text-foreground;
+    background-color: #000;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  /* Standardizing form elements for square look */
+  input, select, textarea, button, .rounded, .rounded-sm, .rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl {
+    border-radius: 6px !important;
+  }
+
+  input:not([type='submit']):not([type='button']), select, textarea {
+    @apply h-10 px-3 py-1 bg-white/5 border-white/10 text-white focus:ring-1 focus:ring-primary outline-none;
+    font-size: 14px;
+  }
+
+  label {
+    @apply text-[13px] mb-1 inline-block font-medium;
+  }
+
+  button {
+    @apply transition-all active:scale-95;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .main-layout {
+    background: #0c192c;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+}
+
+/* Button variants based on user request */
+.bg-button {
+  --tw-bg-opacity: 1;
+  background-color: rgb(17 135 153 / var(--tw-bg-opacity));
+  color: white;
+}
+
+.bg-gold {
+  background-color: rgb(255, 197, 62);
+  color: #171c25;
+}
+
+.dice-shadow {
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+}
+
+@keyframes rightToLeft {
+  0% { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee-rtl {
+  animation: rightToLeft 10s linear infinite;
+}
+
+/* Application Container - Standardized Frame */
+.app-container {
+  @apply w-full max-w-[560px] mx-auto min-h-screen relative shadow-2xl bg-[#0b0f17] flex flex-col border-x border-white/5;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Standardized Form Group */
+.form-group {
+  @apply space-y-2 mb-4;
+}
+
+.form-label {
+  @apply text-gray-400 text-[12px] font-bold uppercase tracking-widest ml-1;
+}
+
+.form-input {
+  @apply w-full bg-white/5 border border-white/10 h-12 px-4 text-white font-bold focus:border-primary outline-none transition-all;
+}
+
+.primary-btn {
+  @apply w-full h-12 bg-primary text-white font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all disabled:opacity-50;
+}
+
+.secondary-btn {
+  @apply w-full h-12 bg-white/5 border border-white/10 text-white font-bold uppercase tracking-widest active:scale-95 transition-all;
+}

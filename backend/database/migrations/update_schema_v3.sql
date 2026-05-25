@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS `system_banks` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `bank_name` VARCHAR(100) NOT NULL,
+  `account_number` VARCHAR(50) NOT NULL,
+  `account_name` VARCHAR(100) NOT NULL,
+  `status` TINYINT DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `banners` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `image_url` TEXT NOT NULL,
+  `link_url` TEXT,
+  `status` TINYINT DEFAULT 1,
+  `sort_order` INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

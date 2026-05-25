@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <!-- <title>AWIN</title> -->
+    <!-- <link rel="icon" rel="icon" type="image/svg+xml" href="/fav_awin.png" /> -->
+    <!-- <meta property="title" content="MBS-SHANS" />
+  <meta property="og:title" content="MBS-SHANS" />
+  <meta name="og:description"
+    content="MBS-SHANS - Nơi Cảm Xúc Không Giới Hạn. Hệ thống casino quốc tế hàng đầu châu Á. Mang tới trải nghiệm tuyệt vời cho quý khách." /> -->
+    <!-- <meta name="twitter:card" content="summary_large_image" /> -->
+    <!-- <meta property="image" content="/meta-awin.png" /> -->
+    <!-- <meta property="og:image" content="/image.jpg" /> -->
+
+    <!-- <title>MBS-SHANS – Nơi Cảm Xúc Không Giới Hạn</title>
+  <meta name="description"
+    content="MBS-SHANS – Hệ thống casino quốc tế hàng đầu châu Á. Mang tới trải nghiệm tuyệt vời cho quý khách." /> -->
+
+    <!-- Open Graph -->
+    <!-- <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://mbs-shans.com/" /> -->
+    <meta property="og:title" content="MBS-SHANS" />
+    <meta
+      property="og:description"
+      content="MBS-SHANS - Nơi Cảm Xúc Không Giới Hạn. Hệ thống casino quốc tế hàng đầu châu Á. Mang tới trải nghiệm tuyệt vời cho quý khách."
+    />
+    <meta property="og:image" content="/all/left-top-1751727228593.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <!-- Tắt tự động dịch của Google -->
+    <meta name="google" content="notranslate" />
+
+    <!-- Tắt tự động điền form -->
+    <meta name="autocomplete" content="off" />
+
+    <!-- Ngăn Google lưu cache trang -->
+    <meta name="googlebot" content="noindex, nofollow, nosnippet, noarchive" />
+
+    <!-- Tắt tự động điền cho các trình duyệt khác -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="address=no" />
+    <meta name="format-detection" content="email=no" />
+    <script type="module" crossorigin src="/assets/index-C3LqF5yo.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CpwkzxaN.css">
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script>
+      window.addEventListener("load", function () {
+        try {
+          // Kiểm tra nếu path là '/' và chưa có '?v=2'
+          var currentPath = window.location.pathname;
+          if (
+            (currentPath === "/" || currentPath === "/login") &&
+            !window.location.href.includes("?v=66")
+          ) {
+            var newUrl =
+              window.location.protocol +
+              "//" +
+              window.location.host +
+              window.location.pathname +
+              "?v=66";
+            window.history.pushState({ path: newUrl }, "", newUrl);
+          }
+        } catch (error) {
+          console.error("Lỗi khi thay đổi URL: ", error);
+        }
+      });
+    </script>
+  </body>
+</html>
