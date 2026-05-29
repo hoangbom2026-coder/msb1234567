@@ -1,0 +1,16 @@
+{
+  "date": "2026-05-29",
+  "timestamp": "2026-05-29T18:20:48+00:00",
+  "hostname": "ubuntu",
+  "database": "mbays_game",
+  "files": {
+    "database.sql.gz": { "bytes": 1434465, "sha256": "d00b08ff1ef19c04f844dc3b3579cc5bb719024e1b79172f61f177f9e38b5bb3" },
+    "uploads.tar.gz": { "bytes": 8490421, "sha256": "7604c4f94d42b209288031d1fb51ecab602b83dff5f3505b7dff37d1d116021e" }
+  },
+  "tables": [{"table":"audit_logs","rows":155},{"table":"banks","rows":33},{"table":"banners","rows":0},{"table":"bets","rows":6656},{"table":"chat_conversations","rows":36},{"table":"chat_messages","rows":276},{"table":"daily_stats","rows":22},{"table":"game_rooms","rows":8},{"table":"game_sessions","rows":78798},{"table":"invite_codes","rows":2},{"table":"notifications","rows":0},{"table":"recharge","rows":49},{"table":"system_banks","rows":0},{"table":"system_config","rows":14},{"table":"user_banks","rows":13},{"table":"users","rows":185},{"table":"vip_configs","rows":0},{"table":"vip_levels","rows":6},{"table":"withdraw","rows":38}],
+  "services": {
+    "mysql": "active",
+    "nginx": "active",
+    "backend": "active"
+  }
+}
