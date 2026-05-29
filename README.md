@@ -1,16 +1,6 @@
-# MBS Daily Backup
+# Backup tự động → msb1234567
 
-Snapshot mỗi ngày tại `daily/YYYY-MM-DD/`:
-- `database.sql.gz` — MySQL full
-- `uploads.tar.gz` — file upload
-- `flags.tar.gz` — cờ ngôn ngữ
-- `configs.tar.gz` — .env
-- `manifest.json` — checksum
+Push lên: **https://github.com/hoangbom2026-coder/msb1234567**  
+Branch: **`backup`** (không đè branch `main` code nguồn)
 
-**Repo PRIVATE** — chứa mật khẩu DB.
-
-Khôi phục:
-```bash
-gunzip -c daily/DATE/database.sql.gz | mysql -u root -p mbays_game
-tar -xzf daily/DATE/uploads.tar.gz -C /var/www/backend/src/public/
-```
+Mỗi ngày: `daily/YYYY-MM-DD/` (database, uploads, flags, configs, manifest)
