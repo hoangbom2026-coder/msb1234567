@@ -1,30 +1,16 @@
-# MBS Daily Backup (Git)
+# MBS Daily Backup
 
-Backup tự động hàng ngày từ VPS production.
+Snapshot mỗi ngày tại `daily/YYYY-MM-DD/`:
+- `database.sql.gz` — MySQL full
+- `uploads.tar.gz` — file upload
+- `flags.tar.gz` — cờ ngôn ngữ
+- `configs.tar.gz` — .env
+- `manifest.json` — checksum
 
-## Nội dung mỗi snapshot (`daily/YYYY-MM-DD/`)
+**Repo PRIVATE** — chứa mật khẩu DB.
 
-| File | Mô tả |
-|------|--------|
-| `database.sql.gz` | Full dump MySQL `mbays_game` (tables, data, routines) |
-| `uploads.tar.gz` | Ảnh/file user upload |
-| `flags.tar.gz` | Cờ ngôn ngữ `/flag` |
-| `configs.tar.gz` | `.env`, nginx, systemd, mysql tuning |
-| `manifest.json` | Checksum, số dòng từng bảng, metadata |
-
-## Khôi phục nhanh
-
+Khôi phục:
 ```bash
-# Database
-gunzip -c daily/2026-05-29/database.sql.gz | mysql -u root -p mbays_game
-
-# Uploads
-tar -xzf daily/2026-05-29/uploads.tar.gz -C /var/www/backend/src/public/
-
-# Configs (xem trong archive trước khi ghi đè)
-tar -xzf daily/2026-05-29/configs.tar.gz -C /tmp/restore-configs
+gunzip -c daily/DATE/database.sql.gz | mysql -u root -p mbays_game
+tar -xzf daily/DATE/uploads.tar.gz -C /var/www/backend/src/public/
 ```
-
-## Repo private — chứa mật khẩu DB trong `configs.tar.gz`
-
-**Không** public repo này.
