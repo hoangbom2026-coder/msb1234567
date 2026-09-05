@@ -21,6 +21,8 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
+          host_key_check: false
+          script_stop: true
           script: |
             set -e
             DEPLOY_DIR=/var/app/sands
