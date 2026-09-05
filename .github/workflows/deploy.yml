@@ -26,6 +26,8 @@ jobs:
           ssh -i ~/.ssh/deploy_key \
             -o StrictHostKeyChecking=no \
             -o ConnectTimeout=30 \
+            -o PubkeyAcceptedKeyTypes=ssh-ed25519 \
+            -o HostKeyAlgorithms=ssh-ed25519,ecdsa-sha2-nistp256,ssh-rsa \
             -p 22 \
             root@159.223.81.157 \
             'bash /var/app/sands/deploy.sh 2>&1'
