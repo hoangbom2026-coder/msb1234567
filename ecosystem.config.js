@@ -1,6 +1,15 @@
 module.exports = {
   apps: [
     {
+      name: 'mbs-deploy-hook',
+      script: '/var/app/sands/deploy-hook.js',
+      interpreter: 'node',
+      autorestart: true,
+      watch: false,
+      max_restarts: 10,
+      restart_delay: 3000,
+    },
+    {
       name: 'mbs-backend',
       cwd: '/var/app/sands/backend',
       script: 'npm',

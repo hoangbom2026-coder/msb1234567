@@ -7,18 +7,16 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Production
+    name: Trigger Deploy via Webhook
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: 159.223.81.157
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: bash /var/app/sands/deploy.sh
+      - name: Trigger deploy webhook
+        run: |
+          curl -fsSL \
+            -X POST \
+            -H "Authorization: Bearer ${{ secrets.DEPLOY_TOKEN }}" \
+            https://159.223.81.157/deploy-hook
