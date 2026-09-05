@@ -14,19 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p 22 159.223.81.157 >> ~/.ssh/known_hosts 2>/dev/null || true
-
       - name: Deploy via SSH
-        run: |
-          ssh -i ~/.ssh/deploy_key \
-            -o StrictHostKeyChecking=no \
-            -o ConnectTimeout=30 \
-            -o IdentitiesOnly=yes \
-            -p 22 \
-            root@159.223.81.157 \
-            'bash /var/app/sands/deploy.sh 2>&1'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 159.223.81.157
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: bash /var/app/sands/deploy.sh
