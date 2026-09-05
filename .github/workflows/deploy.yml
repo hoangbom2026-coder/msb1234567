@@ -14,43 +14,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Check secrets exist
+        run: |
+          echo "SSH_HOST set: ${{ secrets.SSH_HOST != '' }}"
+          echo "SSH_USER set: ${{ secrets.SSH_USER != '' }}"
+          echo "SSH_PORT set: ${{ secrets.SSH_PORT != '' }}"
+          echo "SSH_KEY set: ${{ secrets.SSH_PRIVATE_KEY != '' }}"
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+          echo "Key fingerprint:"
+          ssh-keygen -lf ~/.ssh/deploy_key
+
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          host_key_check: false
-          script_stop: true
-          script: |
-            set -e
-            DEPLOY_DIR=/var/app/sands
-
-            echo "==> Pull latest code"
-            cd $DEPLOY_DIR
-            git pull origin main
-
-            echo "==> Install & build backend"
-            cd $DEPLOY_DIR/backend
-            npm install --omit=dev
-
-            echo "==> Install & build frontend"
-            cd $DEPLOY_DIR/frontend
-            npm install
-            npm run build
-
-            echo "==> Install & build admin"
-            cd $DEPLOY_DIR/admin
-            npm install
-            npm run build
-
-            echo "==> Reload nginx"
-            cp $DEPLOY_DIR/nginx-marinabaysands.conf /etc/nginx/sites-available/marinabaysands
-            nginx -t && nginx -s reload
-
-            echo "==> Restart PM2 apps"
-            pm2 reload $DEPLOY_DIR/ecosystem.config.js --update-env
-            pm2 save
-
-            echo "==> Deploy complete"
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            -o StrictHostKeyChecking=no \
+            -p ${{ secrets.SSH_PORT }} \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            'bash /var/app/sands/deploy.sh'
