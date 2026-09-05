@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+export GIT_SSH_COMMAND="ssh -i /root/.ssh/mbs_deploy -o StrictHostKeyChecking=no"
 DEPLOY_DIR=/var/app/sands
 
 echo "==> Pull latest code"
