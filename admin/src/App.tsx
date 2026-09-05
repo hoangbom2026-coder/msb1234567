@@ -50,7 +50,7 @@ function AdminLayout() {
     );
   }
 
-  const isAdminDomain = hostname === 'admin.iiit.pro';
+  const isAdminDomain = hostname === 'admin.iiit.pro' || location.pathname.startsWith('/admin');
   const isAuthorizedAdmin = user?.role === 'admin' || user?.role === 'ROOT';
 
   if (isAdminDomain && !isAuthorizedAdmin) {

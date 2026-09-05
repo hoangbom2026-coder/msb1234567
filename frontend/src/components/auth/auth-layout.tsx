@@ -9,7 +9,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
   return (
     <div 
       className="min-h-screen flex flex-col justify-center items-center bg-cover bg-center bg-no-repeat relative"
-      style={{ backgroundImage: "url('/images/bg_register.jpg')" }}
+      style={{ backgroundImage: "url('/app/images/bg_register.jpg')" }}
     >
       {/* Overlay to ensure readability */}
       <div className="absolute inset-0 bg-[#0c192c]/60 backdrop-blur-[2px] z-0" />
@@ -20,7 +20,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
           <div className="text-center">
             <div className="flex justify-center mb-6">
               <img 
-                src="/images/left-top-1751727228593.png" 
+                src="/app/images/left-top-1751727228593.png"
                 className="h-16 object-contain drop-shadow-[0_0_15px_rgba(255,197,62,0.5)]" 
                 alt="Logo" 
               />

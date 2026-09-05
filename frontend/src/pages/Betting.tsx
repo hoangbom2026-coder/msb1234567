@@ -22,6 +22,7 @@ export function Betting() {
   const [currentSession, setCurrentSession] = useState<string>('')
   const [lastSession, setLastSession] = useState<string>('')
   const [secondsLeft, setSecondsLeft] = useState<number>(0)
+  const [endTime, setEndTime] = useState<number | null>(null)
   const [lastResults, setLastResults] = useState<number[]>([])
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [betAmount, setBetAmount] = useState<number>(0)
@@ -41,6 +42,7 @@ export function Betting() {
         setOddsConfig(room.odds)
         if (currentSession) {
           setCurrentSession(currentSession.period)
+          setEndTime(Number(currentSession.end_time))
           setLastSession(lastPeriod || (parseInt(currentSession.period) - 1).toString())
         }
         setLastResults(lastResult || [])
@@ -59,6 +61,7 @@ export function Betting() {
     if (!socket) return
 
     socket.on('tick', (data: any) => {
+      if (data.endTime !== undefined) setEndTime(Number(data.endTime))
       // Sync local timer with server if difference is significant or on first tick
       if (Math.abs(data.timeLeft - secondsLeft) > 2 || secondsLeft === 0) {
         setSecondsLeft(data.timeLeft)
@@ -73,6 +76,7 @@ export function Betting() {
     socket.on('result', (data: any) => {
       setLastResults(data.result)
       if (data.period) setLastSession(data.period)
+      setEndTime(null)
       fetchUser()
     })
 
@@ -87,13 +91,15 @@ export function Betting() {
     }
   }, [socket, currentSession, fetchUser, secondsLeft])
 
-  // Local countdown effect
+  // Derive the countdown from the server end timestamp to avoid drift.
   useEffect(() => {
     const timer = setInterval(() => {
-      setSecondsLeft(prev => Math.max(0, prev - 1))
+      if (endTime) {
+        setSecondsLeft(Math.max(0, Math.floor((endTime - Date.now()) / 1000)))
+      }
     }, 1000)
     return () => clearInterval(timer)
-  }, [])
+  }, [endTime])
 
   const formatTime = (totalSeconds: number) => {
     const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0')

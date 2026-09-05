@@ -10,7 +10,10 @@ export const useSocket = (gameCode: string) => {
     const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin);
     const socketInstance = io(SOCKET_URL, {
       auth: { token },
-      transports: ['websocket']
+      transports: ['polling', 'websocket'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     });
 
     socketInstance.on('connect', () => {

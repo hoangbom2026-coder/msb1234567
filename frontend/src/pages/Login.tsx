@@ -35,12 +35,12 @@ export default function LoginPage() {
   return (
     <div className="relative w-full min-h-screen overflow-hidden bg-black flex flex-col items-center justify-center px-6">
       <div className="absolute inset-0">
-        <img src="/images/bg_register.jpg" alt="Background" className="object-cover w-full h-full" loading="lazy" />
+        <img src="/app/images/bg_register.jpg" alt="Background" className="object-cover w-full h-full" loading="lazy" />
       </div>
       
       <div className="relative z-10 w-full max-w-[400px] flex flex-col items-center">
         <div className="mb-8 text-center">
-            <img src="/all/left-top-1751727228593.png" className="w-48 mx-auto" alt="Logo" loading="lazy" />
+            <img src="/app/all/left-top-1751727228593.png" className="w-48 mx-auto" alt="Logo" loading="lazy" />
         </div>
 
         <div className="w-full space-y-6">

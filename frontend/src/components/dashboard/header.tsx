@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 
 export function Header() {
-    const [logo, setLogo] = useState('/images/left-top-1751727228593.png');
+    const [logo, setLogo] = useState('/app/images/left-top-1751727228593.png');
 
     useEffect(() => {
         const fetchConfig = async () => {

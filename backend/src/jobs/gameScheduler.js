@@ -218,7 +218,9 @@ const processSessionPayout = async (room, session) => {
 
     // Prepare next session
     const cycleMs = room.cycle_seconds * 1000;
-    const nextStartTime = session.end_time;
+    // Recover from stale open sessions by rejoining the current wall-clock cycle.
+    const now = Date.now();
+    const nextStartTime = Math.floor(now / cycleMs) * cycleMs;
     const nextEndTime = nextStartTime + cycleMs;
     const nextPeriod = generatePeriod(room, nextEndTime);
 

@@ -142,7 +142,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!socketRef.current) {
         const socket = io(SOCKET_URL, {
           auth: { token },
-          transports: ['websocket']
+          transports: ['polling', 'websocket'],
+          reconnection: true,
+          reconnectionAttempts: 5,
+          reconnectionDelay: 1000,
         });
         socketRef.current = socket;
 

@@ -16,7 +16,7 @@ import { Toaster } from 'sonner';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/app">
       <Toaster position="top-center" richColors />
       <Routes>
         {/* Public Routes */}

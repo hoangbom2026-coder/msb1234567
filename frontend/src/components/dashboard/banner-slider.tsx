@@ -18,7 +18,7 @@ export function BannerSlider() {
       } catch (error) {
         console.error('Failed to fetch banners', error);
         // Fallback banner if API fails
-        setBanners([{ id: 'default', image_url: '/home/banner22.png' }]);
+        setBanners([{ id: 'default', image_url: '/app/home/banner22.png' }]);
       } finally {
         setLoading(false);
       }

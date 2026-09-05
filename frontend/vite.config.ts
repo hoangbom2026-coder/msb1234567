@@ -5,6 +5,7 @@ import { fileURLToPath, URL } from 'node:url'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: '/app/',
   resolve: {
     alias: {
       "@": fileURLToPath(new URL('./src', import.meta.url))
@@ -13,7 +14,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 3000,
-    allowedHosts: ['marinabaysands.iiit.pro'],
+    allowedHosts: ['159.223.81.157', 'marinabaysands.iiit.pro'],
     proxy: {
       '/api': {
         target: 'http://localhost:5000',

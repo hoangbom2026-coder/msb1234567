@@ -10,7 +10,7 @@ export const GAMES = [
 ];
 
 export const BANNERS = [
-  { id: '1', image: '/home/banner22.png', link: '#' },
+  { id: '1', image: '/app/home/banner22.png', link: '#' },
 ];
 
 export const VIP_LEVELS = [
