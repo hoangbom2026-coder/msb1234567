@@ -13,8 +13,15 @@ export const createSession = async (roomId, period, startTime, endTime) => {
   return { id: result.insertId, roomId, period, startTime, endTime, status: 0 };
 };
 
+// "Latest" = the session ending soonest in the future (ASC) so the scheduler
+// picks up the oldest open session first — this is intentional for catch-up.
+// betController uses this to find the *current* open session, which is also
+// the earliest-ending one (there should only be one open at a time anyway).
 export const findLatestSession = async (roomId) => {
-    const [rows] = await pool.query('SELECT s.* FROM game_sessions s WHERE s.room_id = ? AND s.status = 0 ORDER BY s.end_time ASC LIMIT 1', [roomId]);
+    const [rows] = await pool.query(
+        'SELECT s.* FROM game_sessions s WHERE s.room_id = ? AND s.status = 0 ORDER BY s.end_time ASC LIMIT 1',
+        [roomId]
+    );
     return rows[0] || null;
 };
 

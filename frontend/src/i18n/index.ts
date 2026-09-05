@@ -5,14 +5,19 @@
  * Lazily loads translations — only vi & en bundled by default,
  * others fetched on demand when user locale changes.
  */
-import { vi } from './translations/vi';
-import { en } from './translations/en';
-import type { LocaleCode } from './translations/vi';
+// Type-only import — no static value import so vi/en can be lazy-loaded
+import type { LocaleCode, TranslationKey } from './translations/vi';
 
-export type { LocaleCode };
+export type { LocaleCode, TranslationKey };
 
-// All built-in translations (bundle these — they're the primary markets)
-const BUILT_IN: Partial<Record<LocaleCode, typeof vi>> = { vi, en };
+// TranslationShape: widened (string values) version of TranslationKey.
+// Needed because each locale file uses `as const` → literal types that differ
+// across locales. We widen to `string` so all locales satisfy the same shape.
+type DeepString<T> = { [K in keyof T]: T[K] extends object ? DeepString<T[K]> : string };
+export type TranslationShape = DeepString<TranslationKey>;
+
+// Cache for loaded translations (avoid re-importing on every call)
+const cache = new Map<LocaleCode, TranslationShape>();
 
 // Locale → human-readable label for language switcher
 export const LOCALE_LABELS: Record<LocaleCode, string> = {
@@ -39,16 +44,20 @@ export const isRTL = (locale: LocaleCode) => RTL_LOCALES.includes(locale);
  * Load translations for a given locale.
  * Falls back to English if the locale is not available.
  */
-export async function loadTranslations(locale: LocaleCode): Promise<typeof vi> {
-  if (BUILT_IN[locale]) return BUILT_IN[locale]!;
+export async function loadTranslations(locale: LocaleCode): Promise<TranslationShape> {
+  if (cache.has(locale)) return cache.get(locale)!;
 
-  // Dynamic imports for non-bundled locales (lazy loaded)
   try {
+    // All locales lazy-loaded — Vite will split each into its own chunk
     const mod = await import(`./translations/${locale}.ts`);
-    return mod[locale] ?? en;
+    const trans = (mod[locale] ?? mod.default) as TranslationShape;
+    cache.set(locale, trans);
+    return trans;
   } catch {
-    // Locale file doesn't exist yet → fall back to English
-    return en;
+    // Locale file doesn't exist → fall back to English
+    if (locale !== 'en') return loadTranslations('en');
+    // Last resort: return empty-but-valid shape (no crash)
+    return {} as TranslationShape;
   }
 }
 

@@ -35,6 +35,18 @@ export function formatDate(value: number | Date, timezone = 'UTC', locale: Local
   }
 }
 
+export function formatTime(value: number | Date, timezone = 'UTC', locale: LocaleCode = 'en'): string {
+  try {
+    return new Intl.DateTimeFormat(toIntlLocale(locale), {
+      timeZone: timezone,
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false,
+    }).format(typeof value === 'number' ? new Date(value) : value);
+  } catch {
+    return new Date(value).toLocaleTimeString();
+  }
+}
+
 export function formatCurrency(amount: number, currency = 'USD', locale: LocaleCode = 'en'): string {
   try {
     return new Intl.NumberFormat(toIntlLocale(locale), {

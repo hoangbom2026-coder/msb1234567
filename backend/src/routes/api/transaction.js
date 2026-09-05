@@ -16,7 +16,16 @@ const withdrawLimiter = rateLimit({
     message: { status: false, message: 'Quá nhiều yêu cầu rút tiền, vui lòng thử lại sau' },
 });
 
-router.post('/recharge', upload.single('proof'), optimizeUploadedImage, transactionController.requestDeposit);
+// Deposit: max 5 recharge requests per 10 minutes — prevents spam
+const rechargeLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 5,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { status: false, message: 'Quá nhiều yêu cầu nạp tiền, vui lòng thử lại sau' },
+});
+
+router.post('/recharge', rechargeLimiter, upload.single('proof'), optimizeUploadedImage, transactionController.requestDeposit);
 router.post('/withdraw', withdrawLimiter, transactionController.requestWithdraw);
 router.get('/history', transactionController.getHistory);
 
