@@ -14,30 +14,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check secrets exist
-        run: |
-          echo "SSH_HOST set: ${{ secrets.SSH_HOST != '' }}"
-          echo "SSH_USER set: ${{ secrets.SSH_USER != '' }}"
-          echo "SSH_PORT set: ${{ secrets.SSH_PORT != '' }}"
-          echo "SSH_KEY set: ${{ secrets.SSH_PRIVATE_KEY != '' }}"
-          echo "SSH_HOST value: ${{ secrets.SSH_HOST }}"
-          echo "SSH_USER value: ${{ secrets.SSH_USER }}"
-          echo "SSH_PORT value: ${{ secrets.SSH_PORT }}"
-
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
           printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null || true
-          echo "Key fingerprint:"
-          ssh-keygen -lf ~/.ssh/deploy_key || echo "WARNING: key may be invalid"
+          ssh-keyscan -p 22 159.223.81.157 >> ~/.ssh/known_hosts 2>/dev/null || true
 
       - name: Deploy via SSH
         run: |
-          ssh -v -i ~/.ssh/deploy_key \
+          ssh -i ~/.ssh/deploy_key \
             -o StrictHostKeyChecking=no \
             -o ConnectTimeout=30 \
-            -p "${{ secrets.SSH_PORT }}" \
-            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            -p 22 \
+            root@159.223.81.157 \
             'bash /var/app/sands/deploy.sh 2>&1'
