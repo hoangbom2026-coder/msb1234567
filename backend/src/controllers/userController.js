@@ -158,7 +158,15 @@ export const changePassword = async (req, res, next) => {
     const { oldPassword, newPassword } = req.body;
     const userId = req.user.id;
 
+    if (!oldPassword || !newPassword) {
+      return sendResponse(res, false, 'Vui lòng nhập đầy đủ thông tin');
+    }
+    if (newPassword.length < 6) {
+      return sendResponse(res, false, 'Mật khẩu mới phải có ít nhất 6 ký tự');
+    }
+
     const [users] = await pool.query('SELECT password FROM users WHERE id = ?', [userId]);
+    if (users.length === 0) return sendResponse(res, false, 'Người dùng không tồn tại');
     const user = users[0];
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
@@ -229,7 +237,8 @@ export const changePasswordV2 = async (req, res, next) => {
       return sendResponse(res, false, 'Mật khẩu xác nhận không khớp');
     }
 
-    const hash = helpers.md5(newPassword);
+    // Use bcrypt — MD5 is deprecated for password storage
+    const hash = await bcrypt.hash(newPassword, 10);
 
     await pool.query('UPDATE users SET password_v2 = ? WHERE id = ?', [hash, userId]);
 
@@ -241,6 +250,10 @@ export const changePasswordDirect = async (req, res, next) => {
   try {
     const { newPassword } = req.body;
     const userId = req.user.id;
+
+    if (!newPassword || newPassword.length < 6) {
+      return sendResponse(res, false, 'Mật khẩu phải có ít nhất 6 ký tự');
+    }
 
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(newPassword, salt);

@@ -10,6 +10,7 @@ import AdminGameHistory from './pages/AdminGameHistory';
 import AdminSettings from './pages/AdminSettings';
 import AdminLogs from './pages/AdminLogs';
 import AdminLogin from './pages/AdminLogin';
+import ProfitSchedulePage from './pages/ProfitSchedulePage';
 import AdminSidebar from './components/admin/admin-sidebar';
 import { AdminHeader } from './components/admin/admin-header';
 import { AuthProvider, useAuth } from './hooks/use-auth-store';
@@ -119,10 +120,10 @@ function App() {
             <Route path="games/results" element={<AdminGameResults />} />
             <Route path="games/history" element={<AdminGameHistory />} />
             <Route path="games/bets" element={<AdminGameHistory />} />
+            <Route path="games/profit-schedule" element={<ProfitSchedulePage />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="logs" element={<AdminLogs />} />
           </Route>
-          {}
           <Route path="/" element={<Navigate to="/admin" replace />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>

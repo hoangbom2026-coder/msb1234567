@@ -79,8 +79,8 @@ export const registerChatHandlers = (io, socket) => {
       const userRoom = user ? `user_${user.id}` : `guest_${guestId}`;
       io.to(userRoom).emit('user:receive_message', messageData);
 
-      // 5. Notify admins to update their list
-      const [updatedConversation] = await connection.query(
+      // 5. Notify admins to update their list — dùng pool sau khi đã commit
+      const [updatedConversation] = await pool.query(
         `SELECT c.id, c.user_id, c.guest_id, c.user_name, c.user_phone, c.last_message, c.last_message_time, c.has_unread_user_messages
          FROM chat_conversations c WHERE c.id = ?`,
         [conversationId]
@@ -100,7 +100,6 @@ export const registerChatHandlers = (io, socket) => {
 
   // ========= Admin-side Event: Staff sends a message to User/Guest =========
   socket.on('admin:send_message', async ({ conversationId, messageContent }) => {
-    console.log(`[DEBUG] RECEIVED admin:send_message FROM SOCKET ${socket.id}`, conversationId, messageContent);
     const admin = getUserFromSocket(socket);
     const staffRoles = ['admin', 'super_admin', 'cskh', 'agent', 'ROOT'];
     
@@ -155,7 +154,8 @@ export const registerChatHandlers = (io, socket) => {
         io.to('admin_room').emit('admin:receive_message', messageData);
 
         // 6. Update the conversation list for all staff members
-        const [updatedConversation] = await connection.query(
+        // Use pool (not released connection) for this post-commit query
+        const [updatedConversation] = await pool.query(
             `SELECT c.id, c.user_id, c.guest_id, c.user_name, c.user_phone, c.last_message, c.last_message_time, c.has_unread_user_messages
              FROM chat_conversations c WHERE c.id = ?`,
             [conversationId]

@@ -489,7 +489,9 @@ export const updateUser = async (req, res, next) => {
           getIO().to(`user_${targetId}`).emit('reAuth', { message: 'Tài khoản của bạn đã được cập nhật bởi quản trị viên.' });
       }
       if (fields.money !== undefined) {
-          getIO().to(`user_${targetId}`).emit('balanceUpdate', { money: fields.money });
+          // Re-query the actual DB balance instead of using the raw input value
+          const [[fresh]] = await pool.query('SELECT money FROM users WHERE id = ?', [targetId]);
+          getIO().to(`user_${targetId}`).emit('balanceUpdate', { money: parseFloat(fresh?.money ?? 0) });
       }
     } catch (ignore) {}
 

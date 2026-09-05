@@ -2,6 +2,7 @@ import express from 'express';
 import * as adminController from '../../controllers/adminController.js';
 import * as cskhController from '../../controllers/cskhController.js';
 import * as notificationController from '../../controllers/notificationController.js';
+import * as profitScheduleController from '../../controllers/profitScheduleController.js';
 import { upload } from '../../middleware/uploadMiddleware.js';
 import { verifyToken, isAdmin, isAgent, isCSKH, isStaff } from '../../middleware/authMiddleware.js';
 
@@ -57,6 +58,14 @@ router.get('/invite-codes', isAgent, adminController.getInviteCodes);
 router.post('/invite-codes/create', isAgent, adminController.createInviteCode);
 router.post('/invite-codes/update/:id', isAgent, adminController.updateInviteCode);
 router.delete('/invite-codes/delete/:id', isAgent, adminController.deleteInviteCode);
+
+// Profit Schedule (house edge theo phòng + khung giờ)
+router.get('/profit-schedule',              isAdmin, profitScheduleController.getSchedules);
+router.get('/profit-schedule/rooms',        isAdmin, profitScheduleController.getRoomsForSchedule);
+router.get('/profit-schedule/live-preview', isAdmin, profitScheduleController.getLiveEdgePreview);
+router.post('/profit-schedule',             isAdmin, profitScheduleController.createSchedule);
+router.put('/profit-schedule/:id',          isAdmin, profitScheduleController.updateSchedule);
+router.delete('/profit-schedule/:id',       isAdmin, profitScheduleController.deleteSchedule);
 
 // Security
 router.post('/change-password', isAdmin, adminController.updateAdminPassword);

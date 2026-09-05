@@ -22,5 +22,10 @@ export const findLatestSession = async (roomId) => {
  * Updates the result and status of a game session.
  */
 export const updateSessionResult = async (sessionId, result, connection = pool) => {
-    await connection.query('UPDATE game_sessions SET result = ?, status = 2 WHERE id = ?', [JSON.stringify(result), sessionId]);
+    // WHERE status = 1 ensures idempotency — only process sessions in 'processing' state,
+    // preventing double-payout if the scheduler races with itself.
+    await connection.query(
+        'UPDATE game_sessions SET result = ?, status = 2 WHERE id = ? AND status = 1',
+        [JSON.stringify(result), sessionId]
+    );
 };

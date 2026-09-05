@@ -1,0 +1,26 @@
+# ── Environment files ────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Database backups — never commit SQL dumps ────────────────────────────────
+backups/*.sql
+backups/*.sql.gz
+backups/*.tar.gz
+backups/*.tar.gz.sha256
+
+# ── Node ──────────────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+
+# ── One-shot utility scripts (not part of deployable code) ───────────────────
+backend/cleanup_codes.js
+
+# ── OS / Editor ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ── Runtime logs (kept on server, not in repo) ────────────────────────────────
+logs/*.log

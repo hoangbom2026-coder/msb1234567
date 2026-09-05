@@ -1,67 +1,60 @@
+/**
+ * lib/time-utils.ts (admin)
+ *
+ * Re-export từ frontend time-utils pattern.
+ * Admin dùng timezone detect từ IP giống frontend.
+ */
 
-
-const DEFAULT_TIMEZONE = 'Asia/Ho_Chi_Minh';
+import type { LocaleCode } from '@/i18n/translations/vi';
 
 export function formatDateTime(
-  date: Date | number | string, 
-  options: Intl.DateTimeFormatOptions = {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour12: false,
-  }
+  value: number | Date,
+  timezone = 'UTC',
+  locale: LocaleCode = 'en',
 ): string {
-  if (!date) return '---';
   try {
-    const d = new Date(Number(date) || date);
-    if (isNaN(d.getTime())) return '---';
-    
-    return new Intl.DateTimeFormat('vi-VN', {
-      ...options,
-      timeZone: DEFAULT_TIMEZONE,
-    }).format(d);
-  } catch (e) {
-    console.error('Error formatting date:', e);
-    return '---';
+    return new Intl.DateTimeFormat(toIntlLocale(locale), {
+      timeZone: timezone,
+      year:     'numeric', month:  '2-digit', day:    '2-digit',
+      hour:     '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false,
+    }).format(typeof value === 'number' ? new Date(value) : value);
+  } catch {
+    return new Date(value).toLocaleString();
   }
 }
 
-export function formatTime(date: Date | number | string): string {
-  return formatDateTime(date, {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  });
+export function formatDate(value: number | Date, timezone = 'UTC', locale: LocaleCode = 'en'): string {
+  try {
+    return new Intl.DateTimeFormat(toIntlLocale(locale), {
+      timeZone: timezone,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+    }).format(typeof value === 'number' ? new Date(value) : value);
+  } catch {
+    return new Date(value).toLocaleDateString();
+  }
 }
 
-export function formatDate(date: Date | number | string): string {
-  return formatDateTime(date, {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+export function formatCurrency(amount: number, currency = 'USD', locale: LocaleCode = 'en'): string {
+  try {
+    return new Intl.NumberFormat(toIntlLocale(locale), {
+      style: 'currency', currency,
+      minimumFractionDigits: 2,
+    }).format(amount);
+  } catch {
+    return `${currency} ${amount.toLocaleString()}`;
+  }
 }
 
-export function getRelativeTime(date: Date | number | string): string {
-  if (!date) return '---';
-  const d = new Date(Number(date) || date);
-  if (isNaN(d.getTime())) return '---';
+export function formatNumber(amount: number, locale: LocaleCode = 'en'): string {
+  return new Intl.NumberFormat(toIntlLocale(locale)).format(amount);
+}
 
-  const diff = Date.now() - d.getTime();
-  const seconds = Math.floor(diff / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-
-  if (seconds < 30) return 'Vừa xong';
-  if (seconds < 60) return `${seconds} giây trước`;
-  if (minutes < 60) return `${minutes} phút trước`;
-  if (hours < 24) return `${hours} giờ trước`;
-  if (days < 7) return `${days} ngày trước`;
-  
-  return formatDate(date);
+function toIntlLocale(locale: LocaleCode): string {
+  const MAP: Partial<Record<LocaleCode, string>> = {
+    vi: 'vi-VN', en: 'en-US', zh: 'zh-CN', th: 'th-TH',
+    id: 'id-ID', ms: 'ms-MY', ja: 'ja-JP', ko: 'ko-KR',
+    de: 'de-DE', fr: 'fr-FR', ru: 'ru-RU', ar: 'ar-SA',
+  };
+  return MAP[locale] ?? locale;
 }

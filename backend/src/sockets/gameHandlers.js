@@ -2,27 +2,33 @@ import pool from '../config/database.js';
 import * as k3Logic from '../services/gameLogic/k3Logic.js';
 import * as fiveDLogic from '../services/gameLogic/fiveDLogic.js';
 import * as wingoLogic from '../services/gameLogic/wingoLogic.js';
+import { logTransaction } from '../middleware/transactionLogger.js';
 
 export const handleJoinGame = (io, socket) => {
   socket.on('joinGame', (data) => {
     const { roomId, gameType } = data;
-    const room = roomId || gameType; 
+    const room = roomId || gameType;
     if (room) {
       socket.join(`room_${room}`);
-      console.log(`User ${socket.id} joined room ${room}`);
     }
   });
 };
 
 export const handlePlaceBet = (io, socket) => {
   socket.on('placeBet', async (data) => {
-    console.log(`[DEBUG] Received bet from ${socket.user?.id || 'Guest'}:`, JSON.stringify(data));
+    const { roomId, bets } = data; // bets: [{ code: 'b', amount: 1000 }]
+    const user = socket.user;
+
+    // Guard before acquiring connection — no connection leak
+    if (!user) {
+      return socket.emit('placeBetResponse', { status: false, message: 'Vui lòng đăng nhập để đặt cược' });
+    }
+    if (!roomId || !Array.isArray(bets) || bets.length === 0) {
+      return socket.emit('placeBetResponse', { status: false, message: 'Dữ liệu đặt cược không hợp lệ' });
+    }
+
     const connection = await pool.getConnection();
     try {
-      const { roomId, bets } = data; // bets: [{ code: 'b', amount: 1000 }]
-      const user = socket.user;
-
-      if (!user) throw new Error('Vui lòng đăng nhập để đặt cược');
       const userId = user.id;
 
       await connection.beginTransaction();
@@ -49,6 +55,7 @@ export const handlePlaceBet = (io, socket) => {
       const userData = users[0];
 
       let totalAmount = bets.reduce((sum, b) => sum + parseFloat(b.amount || 0), 0);
+      if (totalAmount <= 0) throw new Error('Số tiền đặt cược không hợp lệ');
       if (parseFloat(userData.money) < totalAmount) throw new Error('Số dư tài khoản không đủ');
 
       // 3. Trừ tiền
@@ -65,8 +72,6 @@ export const handlePlaceBet = (io, socket) => {
           [userId, session.room_id, session.id, session.period, bet.code, bet.amount, odds, Date.now()]
         );
 
-        // Import logTransaction internally to avoid circular dependencies if any
-        const { logTransaction } = await import('../middleware/transactionLogger.js');
         logTransaction({
           type: 'bet',
           userId,

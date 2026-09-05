@@ -32,17 +32,18 @@ export const getBanners = async (req, res, next) => {
 export const getGameResults = async (req, res, next) => {
   try {
     const gameIdFromQuery = req.query.game_id || req.query.gameId;
-    const limit = req.query.limit || 50;
+    const limitRaw = parseInt(req.query.limit, 10);
+    const limit = isNaN(limitRaw) || limitRaw < 1 ? 50 : Math.min(limitRaw, 200);
 
     if (!gameIdFromQuery) return sendResponse(res, false, 'Thiếu game_id');
 
     const [rows] = await pool.query(
-      `SELECT s.period, s.result, s.total_payout, s.end_time 
+      `SELECT s.period, s.result, s.total_payout, s.end_time
        FROM game_sessions s
        JOIN game_rooms r ON s.room_id = r.id
        WHERE r.game_id = ? AND s.status = 2
        ORDER BY s.end_time DESC LIMIT ?`,
-      [gameIdFromQuery, parseInt(limit)]
+      [gameIdFromQuery, limit]
     );
     
     return sendResponse(res, true, 'Thành công', rows);

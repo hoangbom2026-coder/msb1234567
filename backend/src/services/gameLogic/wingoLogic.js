@@ -6,21 +6,24 @@ export const generateResult = (min = 0, max = 9) => {
 
 export const checkWin = (betCode, result) => {
   const num = Number(result[0]);
-  
-  if (betCode === 'b') return num >= 5; // Big
-  if (betCode === 's') return num <= 4; // Small
-  if (betCode === 'l') return num % 2 !== 0; // Odd
-  if (betCode === 'c') return num % 2 === 0; // Even
-  
+
+  if (betCode === 'b') return num >= 5; // Tài
+  if (betCode === 's') return num <= 4; // Xỉu
+  if (betCode === 'l') return num % 2 !== 0; // Đơn (lẻ)
+  if (betCode === 'c') return num % 2 === 0; // Đôi (chẵn)
+
   // Direct number bet
   if (!isNaN(betCode)) {
     return num === Number(betCode);
   }
-  
-  // Color bets (standard wingo)
-  if (betCode === 'green') return [1, 3, 7, 9].includes(num) || num === 5;
-  if (betCode === 'red') return [2, 4, 6, 8].includes(num) || num === 0;
-  if (betCode === 'violet') return [0, 5].includes(num);
+
+  // Color bets — tiêu chuẩn Wingo:
+  // violet: 0 và 5 (thắng cả violet lẫn red/green)
+  // green:  1, 3, 7, 9 (đơn không phải 5) và 5 (violet+green)
+  // red:    2, 4, 6, 8 (chẵn không phải 0) và 0 (violet+red)
+  if (betCode === 'violet') return num === 0 || num === 5;
+  if (betCode === 'green')  return num === 1 || num === 3 || num === 5 || num === 7 || num === 9;
+  if (betCode === 'red')    return num === 0 || num === 2 || num === 4 || num === 6 || num === 8;
 
   return false;
 };

@@ -17,6 +17,9 @@ jobs:
       - name: Trigger deploy webhook
         run: |
           curl -fsSL \
+            --max-time 30 \
+            --retry 2 \
+            --retry-delay 5 \
             -X POST \
             -H "Authorization: Bearer ${{ secrets.DEPLOY_TOKEN }}" \
             https://159.223.81.157/deploy-hook

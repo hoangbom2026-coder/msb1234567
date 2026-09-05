@@ -1,10 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-const logsDir = 'logs';
+import { fileURLToPath } from 'url';
+
+// Use absolute path relative to this file so it works regardless of CWD
+// middleware/ → src/ → backend/ → sands/logs
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const logsDir = path.resolve(__dirname, '../../../logs');
 const transactionLogFile = path.join(logsDir, 'transactions.log');
-if (!fs.existsSync(logsDir)) {
-    fs.mkdirSync(logsDir, { recursive: true });
-}
+fs.mkdirSync(logsDir, { recursive: true });
 
 export const logTransaction = (transactionData) => {
     const {
@@ -59,7 +62,7 @@ export const transactionLoggingMiddleware = (req, res, next) => {
             const { id_order, status: txStatus, money } = data;
             const transactionType = req.path.includes('/withdraw')
                 ? 'withdraw'
-                : '/recharge'
+                : req.path.includes('/recharge')
                     ? 'recharge'
                     : 'unknown';
 

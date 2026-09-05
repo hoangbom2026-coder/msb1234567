@@ -1,6 +1,6 @@
 import express from 'express';
 import * as gameController from '../../controllers/gameController.js';
-import { verifyToken } from '../../middleware/authMiddleware.js';
+import { verifyToken, isStaff } from '../../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.get('/odds', gameController.getGameOdds);
 // Betting page init
 router.get('/init/:game_id', gameController.getGameInitData);
 
-// Diagnostic endpoint
-router.get('/diagnostic', gameController.getDiagnostic);
+// Diagnostic endpoint — staff only, not for public
+router.get('/diagnostic', verifyToken, isStaff, gameController.getDiagnostic);
 
 export default router;

@@ -13,7 +13,8 @@ import {
   Activity,
   Zap,
   Lock,
-  Target
+  Target,
+  SlidersHorizontal
 } from 'lucide-react';
 
 export interface NavItem {
@@ -59,6 +60,12 @@ export const ADMIN_NAV_ITEMS: NavGroup[] = [
         href: '/admin/games/results',
         label: 'Điều phối Kết quả',
         icon: Target,
+        roles: ['admin', 'ROOT']
+      },
+      {
+        href: '/admin/games/profit-schedule',
+        label: 'House Edge Schedule',
+        icon: SlidersHorizontal,
         roles: ['admin', 'ROOT']
       },
       {

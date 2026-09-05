@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken';
 import pool from '../config/database.js';
-import dotenv from 'dotenv';
 
-dotenv.config();
-
-const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_key_123';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('❌ JWT_SECRET env var is not set. Check your .env file.');
+  process.exit(1);
+}
 export const verifyToken = async (req, res, next) => {
   try {
     const token = req.headers['x-access-token'] || req.headers['authorization']?.split(' ')[1];

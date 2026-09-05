@@ -10,7 +10,7 @@ import * as wingoLogic from '../services/gameLogic/wingoLogic.js';
 /**
  * Handles the bet placement logic.
  */
-export const placeBet = async (req, res) => {
+export const placeBet = async (req, res, next) => {
     const { roomId, betCode, amount } = req.body;
     const userId = req.user.id;
 
@@ -19,6 +19,10 @@ export const placeBet = async (req, res) => {
     }
 
     try {
+        // Validate amount
+        if (isNaN(parseFloat(amount))) {
+            return res.status(400).json({ success: false, message: 'Số tiền cược không hợp lệ.' });
+        }
         // 1. Find the current open session and room details
         const [roomRows] = await pool.query('SELECT * FROM game_rooms WHERE id = ?', [roomId]);
         if (roomRows.length === 0) {
@@ -71,7 +75,6 @@ export const placeBet = async (req, res) => {
         res.status(201).json({ success: true, message: 'Tham gia thành công', data: newBet });
 
     } catch (error) {
-        console.error('Bet placement error:', error);
-        res.status(500).json({ success: false, message: error.message || 'Lỗi hệ thống.' });
+        next(error);
     }
 };

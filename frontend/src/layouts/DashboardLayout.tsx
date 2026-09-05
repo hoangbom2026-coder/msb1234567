@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BottomNav } from '@/components/layout/bottom-nav';
+import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher';
 import { cn } from '@/lib/utils';
 
 interface DashboardLayoutProps {
@@ -27,6 +28,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, hideHeader 
                                 </div>
                             </div>
                         </div>
+                        <LanguageSwitcher compact className="flex-shrink-0" />
                     </header>
                 )}
 

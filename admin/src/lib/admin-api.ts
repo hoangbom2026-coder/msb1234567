@@ -1,4 +1,5 @@
 import { getStoredToken as getAuthToken } from '@/hooks/use-auth-store';
+import api from '@/lib/api';
 
 async function adminRequest(endpoint: string, options: RequestInit = {}) {
     const token = getAuthToken();
@@ -168,4 +169,27 @@ export const adminApi = {
     deleteInviteCode: (id: number) => adminRequest(`/invite-codes/delete/${id}`, { method: 'DELETE' }),
 
     changePassword: (newPassword: string) => adminRequest('/change-password', { method: 'POST', body: JSON.stringify({ newPassword }) }),
+
+    // Profit schedule
+    getProfitSchedules:   (room_id?: number) => adminRequest(`/profit-schedule${room_id ? `?room_id=${room_id}` : ''}`),
+    getProfitRooms:       () => adminRequest('/profit-schedule/rooms'),
+    getLiveEdgePreview:   () => adminRequest('/profit-schedule/live-preview'),
+    createProfitSchedule: (data: any) => adminRequest('/profit-schedule', { method: 'POST', body: JSON.stringify(data) }),
+    updateProfitSchedule: (id: number, data: any) => adminRequest(`/profit-schedule/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deleteProfitSchedule: (id: number) => adminRequest(`/profit-schedule/${id}`, { method: 'DELETE' }),
+};
+
+/**
+ * Detect locale từ IP (public endpoint — không cần auth).
+ */
+export const getLocaleFromIP = async () => {
+    try {
+        const baseUrl = import.meta.env.VITE_API_URL || '/api';
+        const res = await fetch(`${baseUrl}/config/locale`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.status ? data.data : null;
+    } catch {
+        return null;
+    }
 };

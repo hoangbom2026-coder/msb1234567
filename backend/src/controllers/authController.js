@@ -1,12 +1,9 @@
 import pool from '../config/database.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
 import { sendTelegramAdmin } from '../utils/telegram.js';
 
-dotenv.config();
-
-const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_key_123';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const generateInviteCode = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();

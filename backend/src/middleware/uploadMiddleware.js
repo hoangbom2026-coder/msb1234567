@@ -2,22 +2,23 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import sharp from 'sharp';
+import { fileURLToPath } from 'url';
+
+// Absolute path so this works regardless of PM2 CWD
+// uploadMiddleware.js → middleware/ → src/ → backend/ → src/public/uploads/
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const UPLOAD_ROOT = path.resolve(__dirname, '../public/uploads');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    let uploadPath = 'src/public/uploads/recharge/';
+    let subdir = 'recharge';
     if (file.fieldname === 'avatar') {
-      uploadPath = 'src/public/uploads/avatar/';
+      subdir = 'avatar';
     } else if (file.fieldname === 'chat') {
-      uploadPath = 'src/public/uploads/chat/';
-    } else if (file.fieldname === 'image' || file.fieldname === 'proof') {
-      uploadPath = 'src/public/uploads/recharge/';
+      subdir = 'chat';
     }
-    
-    // Ensure directory exists
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
-    }
+    const uploadPath = path.join(UPLOAD_ROOT, subdir);
+    fs.mkdirSync(uploadPath, { recursive: true });
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {

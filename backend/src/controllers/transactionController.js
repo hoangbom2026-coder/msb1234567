@@ -1,6 +1,7 @@
 import pool from '../config/database.js';
 import { logTransaction } from '../middleware/transactionLogger.js';
 import * as helpers from '../utils/helpers.js';
+import bcrypt from 'bcrypt';
 import { getIO } from '../config/socket.js';
 import { sendTelegramAdmin } from '../utils/telegram.js';
 
@@ -71,49 +72,55 @@ export const requestWithdraw = async (req, res, next) => {
     const userId = req.user.id;
     const pass = password || passwordV2;
 
-    console.log(`[Withdraw DEBUG] Request received for user ${userId}, amount: ${money}`);
     if (!pass) {
-        console.log(`[Withdraw DEBUG] Failed: Missing password`);
         return sendResponse(res, false, 'Vui lòng nhập mật khẩu thanh toán');
     }
 
     const [userRows] = await pool.query('SELECT money, phone, password_v2 FROM users WHERE id = ?', [userId]);
     if (userRows.length === 0) {
-      console.log(`[Withdraw DEBUG] Failed: User not found`);
       return sendResponse(res, false, 'Tài khoản không tồn tại');
     }
-    
+
     const [bankRows] = await pool.query('SELECT id FROM user_banks WHERE user_id = ? AND status = "active"', [userId]);
     if (bankRows.length === 0) {
-      console.log(`[Withdraw DEBUG] Failed: No active bank link`);
       return sendResponse(res, false, 'Vui lòng liên kết ngân hàng trước khi rút tiền');
     }
 
     if (!userRows[0].password_v2) {
-      console.log(`[Withdraw DEBUG] Failed: Transaction password not set`);
       return sendResponse(res, false, 'Bạn chưa thiết lập mật khẩu thanh toán. Vui lòng thiết lập trong phần Bảo mật.');
     }
 
     const pass_str = pass.toString();
-    const hash = helpers.md5(pass_str);
-    if (hash !== userRows[0].password_v2) {
-      console.log(`[Withdraw DEBUG] Failed: Incorrect password. Hash: ${hash}, DB: ${userRows[0].password_v2}`);
+    const storedHash = userRows[0].password_v2;
+
+    // Support both legacy MD5 hashes and new bcrypt hashes (lazy migration)
+    let passwordMatch = false;
+    if (storedHash.startsWith('$2')) {
+      // bcrypt hash
+      passwordMatch = await bcrypt.compare(pass_str, storedHash);
+    } else {
+      // Legacy MD5 — compare then upgrade to bcrypt on success
+      passwordMatch = (helpers.md5(pass_str) === storedHash);
+      if (passwordMatch) {
+        const newHash = await bcrypt.hash(pass_str, 10);
+        await pool.query('UPDATE users SET password_v2 = ? WHERE id = ?', [newHash, userId]);
+      }
+    }
+
+    if (!passwordMatch) {
       return sendResponse(res, false, 'Mật khẩu thanh toán không chính xác');
     }
 
     const amount = parseFloat(money);
     const config_min_withdraw = await getConfig('min_withdraw', '1000');
     if (amount < parseFloat(config_min_withdraw)) {
-      console.log(`[Withdraw DEBUG] Failed: Amount ${amount} < min ${config_min_withdraw}`);
       return sendResponse(res, false, `Số tiền rút tối thiểu là ${parseFloat(config_min_withdraw).toLocaleString()} $`);
     }
 
     if (amount > parseFloat(userRows[0].money)) {
-      console.log(`[Withdraw DEBUG] Failed: Insufficient balance. Have: ${userRows[0].money}, Req: ${amount}`);
       return sendResponse(res, false, 'Số dư không đủ để thực hiện giao dịch này');
     }
 
-    console.log(`[Withdraw DEBUG] Checks passed. Proceeding with transaction...`);
     const feePercent = parseFloat(await getConfig('withdraw_fee', '8')) / 100;
     const fee = amount * feePercent;
     const receive_amount = amount - fee;
@@ -139,8 +146,7 @@ export const requestWithdraw = async (req, res, next) => {
       );
 
       await connection.commit();
-      console.log(`[Withdraw DEBUG] Transaction committed. Order ID: ${id_order}`);
-      
+
       logTransaction({
           type: 'withdraw', userId, phone, amount, orderId: id_order, status: 'pending', description: 'Yêu cầu rút tiền'
       });
@@ -164,7 +170,6 @@ export const requestWithdraw = async (req, res, next) => {
       return sendResponse(res, true, 'Yêu cầu rút tiền thành công, đang chờ phê duyệt', { id_order });
     } catch (e) {
       await connection.rollback();
-      console.log(`[Withdraw DEBUG] Transaction rolled back. Error: ${e.message}`);
       return sendResponse(res, false, e.message);
     } finally {
       connection.release();

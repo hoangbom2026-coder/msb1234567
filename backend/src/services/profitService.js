@@ -2,8 +2,24 @@ import * as k3Logic from './gameLogic/k3Logic.js';
 import * as wingoLogic from './gameLogic/wingoLogic.js';
 import * as fiveDLogic from './gameLogic/fiveDLogic.js';
 
-export const findBestResultForHouse = async (room, bets, count = 3, max = null) => {
+/**
+ * Quyết định kết quả phiên dựa trên houseEdgePercent (0-100).
+ *   0   → luôn random
+ *   100 → luôn chọn kết quả bất lợi nhất cho người chơi
+ * Giá trị trung gian: xác suất tỷ lệ thuận với houseEdgePercent.
+ *
+ * @param {object} room
+ * @param {Array}  bets
+ * @param {number} houseEdgePercent - 0..100, đọc từ profit_schedule
+ * @param {number} count
+ * @param {number|null} max
+ */
+export const findBestResultForHouse = async (room, bets, houseEdgePercent = 70, count = 3, max = null) => {
   if (bets.length === 0) return generateRandomResult(room, count, max);
+
+  // Xác suất kích hoạt house-edge manipulation
+  const shouldManipulate = Math.random() * 100 < houseEdgePercent;
+  if (!shouldManipulate) return generateRandomResult(room, count, max);
 
   if (room.type === 'wingo') return optimizeWingo(bets);
   if (room.type === 'k3') return optimizeK3(bets);

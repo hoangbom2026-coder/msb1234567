@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 import pool from '../config/database.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'mbs_secret_key_2024';
+// Dùng cùng JWT_SECRET với authMiddleware — load từ .env qua dotenv/config ở server.js
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export const handleUserAuth = (socket) => {
   socket.on('auth', async (data) => {

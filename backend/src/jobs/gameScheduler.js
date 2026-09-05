@@ -3,6 +3,7 @@ import * as k3Logic from '../services/gameLogic/k3Logic.js';
 import * as fiveDLogic from '../services/gameLogic/fiveDLogic.js';
 import * as wingoLogic from '../services/gameLogic/wingoLogic.js';
 import * as profitService from '../services/profitService.js';
+import { getEffectiveHouseEdge } from '../services/profitScheduleService.js';
 import { generatePeriod } from '../utils/helpers.js';
 import { logTransaction } from '../middleware/transactionLogger.js';
 import { getIO } from '../config/socket.js';
@@ -124,20 +125,21 @@ const processSessionPayout = async (room, session) => {
         count = 1; max = 9; minVal = 0;
       }
 
-      // Probability 70/30 of manipulation
-      const shouldManipulate = Math.random() < 0.70;
-      let generatedResult;
+      // Lấy house edge động từ DB (cache 30s), fallback về 70 nếu lỗi
+      const houseEdgePercent = await getEffectiveHouseEdge(room.id);
 
-      if (shouldManipulate && bets.length > 0) {
-          generatedResult = await profitService.findBestResultForHouse(room, bets, count, max);
-      } else {
-          if (room.type === 'k3') generatedResult = k3Logic.generateResult();
-          else if (room.type === '5d') generatedResult = fiveDLogic.generateResult(count, minVal, max);
-          else if (room.type === 'wingo') generatedResult = wingoLogic.generateResult(minVal, max);
-          else generatedResult = Array(count).fill(0);
-      }
+      // profitService tự quyết xác suất dựa trên houseEdgePercent
+      const generatedResult = await profitService.findBestResultForHouse(room, bets, houseEdgePercent, count, max);
 
-      result = generatedResult;
+      // Nếu edge = 0 và không có bets, sinh random bình thường
+      const finalResult = generatedResult || (
+        room.type === 'k3'    ? k3Logic.generateResult() :
+        room.type === '5d'    ? fiveDLogic.generateResult(count, minVal, max) :
+        room.type === 'wingo' ? wingoLogic.generateResult(minVal, max) :
+        Array(count).fill(0)
+      );
+
+      result = finalResult;
       await connection.query('UPDATE game_sessions SET result = ? WHERE id = ?', [JSON.stringify(result), session.id]);
     }
 

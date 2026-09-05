@@ -2,6 +2,8 @@ import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import pool from './database.js';
 
+const JWT_SECRET = process.env.JWT_SECRET;
+
 let io;
 
 export const initSocket = (server) => {
@@ -14,7 +16,8 @@ export const initSocket = (server) => {
 
   io = new Server(server, {
     cors: {
-      origin: "*", methods: ["GET", "POST"],
+      origin: allowedOrigins,
+      methods: ["GET", "POST"],
       credentials: true
     }
   });
@@ -26,7 +29,7 @@ export const initSocket = (server) => {
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret_key_123');
+      const decoded = jwt.verify(token, JWT_SECRET);
       const [rows] = await pool.query('SELECT id, phone, name_user, role, status, money FROM users WHERE id = ?', [decoded.id]);
 
       if (rows.length > 0) {
